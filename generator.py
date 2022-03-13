@@ -4,6 +4,7 @@ from colorama import init as colorama_init
 from tkinter import messagebox
 from docx import Document
 from docx.shared import Inches
+from docx.enum.text import WD_ALIGN_PARAGRAPH
 import os
 import time
 import datetime
@@ -124,6 +125,9 @@ def save_to_docx(filename):
     global PNG_PATH
     document = Document()
     document.add_picture(os.path.join(PNG_PATH, f'{filename}.png'), width=Inches(3.95), height=Inches(2.47))
+    document.paragraphs[-1].alignment = WD_ALIGN_PARAGRAPH.CENTER
+    for section in document.sections:
+        section.top_margin = Inches(0.12)
     document.save(os.path.join(PNG_PATH, 'Print Out.docx'))
     success(f"[o] Successfully created receipt document for {filename}")
 
