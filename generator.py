@@ -1,12 +1,14 @@
 from PIL import Image, ImageDraw, ImageFont, ImageTk
 from termcolor import colored
 from colorama import init as colorama_init
+from tkinter import messagebox
+from docx import Document
+from docx.shared import Inches
 import os
 import time
 import datetime
 import argparse
 import tkinter as tk
-from tkinter import messagebox
 
 parser = argparse.ArgumentParser()
 
@@ -104,11 +106,26 @@ def create_certificate(name, phone_number, address1, address2=None, address3=Non
     d.text(location2, t2, fill=text_color, font=font2, align='right')
 
     # Save the certificate name
+
+    filename = f'{name}-{format_datetime(datetime.datetime.now())}'
+
     if 'png' in CERTIFICATE_TYPE:
-        im.save(os.path.join(PNG_PATH, os.path.join('{}-{}.png'.format(name, format_datetime(datetime.datetime.now())))))
+        im.save(os.path.join(PNG_PATH, f'{filename}.png'))
     if 'pdf' in CERTIFICATE_TYPE:
-        im.save(os.path.join(PDF_PATH, os.path.join('{}-{}.pdf'.format(name, format_datetime(datetime.datetime.now())))))
+        im.save(os.path.join(PDF_PATH, f'{filename}.pdf'))
+        # im.save(os.path.join(PDF_PATH, os.path.join('{}-{}.pdf'.format(name, format_datetime(datetime.datetime.now())))))
     success(f"[o] Successfully created receipt for {name}")
+    return filename
+
+def save_to_docx(filename):
+    '''
+    Save png file into a docx format to print
+    '''
+    global PNG_PATH
+    document = Document()
+    document.add_picture(os.path.join(PNG_PATH, f'{filename}.png'), width=Inches(3.95), height=Inches(2.47))
+    document.save(os.path.join(PNG_PATH, 'Print Out.docx'))
+    success(f"[o] Successfully created receipt document for {filename}")
 
 def init():
     '''
@@ -219,7 +236,8 @@ def on_click():
     phone_number = format_phone_number(entry_phone_number.get())
     address = text_address.get("1.0", tk.END)
 
-    create_certificate(name=name, phone_number=phone_number, address1=address)
+    filename = create_certificate(name=name, phone_number=phone_number, address1=address)
+    save_to_docx(filename)
     messagebox.showinfo("Success","Succesfully generated receipt!")
 
 if __name__ == '__main__':
