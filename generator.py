@@ -276,7 +276,7 @@ if __name__ == '__main__':
         text_address.pack(side= tk.RIGHT, fill = tk.X)
 
         frame_button = tk.Frame(root)
-        button_submit = tk.Button(frame_button, text='Submit', command=on_click, bg="#20bebe", fg="white", height=2, width=15)
+        button_submit = tk.Button(frame_button, text='Submit', command=on_click, height=2, width=15)
         frame_button.pack(side= tk.TOP, fill= tk.X, padx = 5, pady= 20)
         button_submit.pack(side= tk.TOP)
 
